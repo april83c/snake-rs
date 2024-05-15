@@ -1,3 +1,5 @@
+#![allow(arithmetic_overflow)] // For when we set next_position
+
 use rand::Rng;
 use core::ops::Add;
 
@@ -91,7 +93,6 @@ impl Snake {
 		let mut rng = rand::thread_rng();
 
 		if self.board_size.x * self.board_size.y <= self.apples.len() as i32 {
-			println!("meow?!");
 			return Err(false);
 		}
 
@@ -142,6 +143,10 @@ impl Snake {
 		// check if we are eating an apple
 		if let Some(index) = self.apples.iter().position(|apple| apple == &next_position) {
 			self.apples.remove(index);
+			match self.generate_valid_apple_position() {
+				Ok(apple) => { self.apples.push(apple) },
+				_ => ()
+			}
 		} else {
 			self.snake.pop();
 		}
